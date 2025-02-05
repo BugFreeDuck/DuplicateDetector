@@ -74,7 +74,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0"></TextBlock>
+            <Image Name="ImageA" Grid.Column="0"></Image>
             <Border
                 Grid.Column="1"
                 BorderBrush="Black">
@@ -93,7 +93,7 @@
                 </ListView>
             </Border>
 
-            <TextBlock Grid.Column="2"></TextBlock>
+            <Image Name="ImageB" Grid.Column="2"></Image>
 
         </Grid>
 

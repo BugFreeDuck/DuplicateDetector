@@ -2,14 +2,12 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using DuplicateDetector.WinApp.DuplicateDetection;
 using Microsoft.Win32;
 
 namespace DuplicateDetector.WinApp;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
 public partial class MainWindow : Window
 {
     private readonly DuplicateDetectionService _duplicateDetectionService;
@@ -50,6 +48,24 @@ public partial class MainWindow : Window
     {
         var item = sender as ListViewItem;
         var duplicateItem = item?.Content as DuplicateEntry;
-        Debug.WriteLine(duplicateItem);
+
+        if (duplicateItem is null)
+        {
+            return;
+        }
+
+        var firstFile = duplicateItem.Occurrences.First();
+        var lastFile = duplicateItem.Occurrences.Last();
+        RenderImage(ImageA, firstFile);
+        RenderImage(ImageB, lastFile);
+    }
+
+    private static void RenderImage(Image imageControl, string filename)
+    {
+        var bitmap = new BitmapImage();
+        bitmap.BeginInit();
+        bitmap.UriSource = new Uri(filename);
+        bitmap.EndInit();
+        imageControl.Source = bitmap;
     }
 }
