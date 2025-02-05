@@ -4,15 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DuplicateDetector.WinApp"
+        xmlns:duplicateDetection="clr-namespace:DuplicateDetector.WinApp.DuplicateDetection"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800" Width="1200">
     <Window.Resources>
-        <!-- <Style TargetType="TextBlock"> -->
-        <!--     <Setter Property="Foreground" Value="Red" /> -->
-        <!--     <Setter Property="FontSize" Value="14" /> -->
-        <!--     <Setter Property="FontFamily" Value="Sagoe UI" /> -->
-        <!--     <Setter Property="FontStyle" Value="Normal" /> -->
-        <!-- </Style> -->
+
     </Window.Resources>
 
     <Grid>
@@ -58,7 +54,7 @@
             Grid.Row="0"
             Grid.Column="2"
             Grid.ColumnSpan="9"
-            PreviewMouseDown="FolderInput_OnMouseLeftButtonDown"
+            PreviewMouseLeftButtonDown="FolderInput_OnMouseLeftButtonDown"
             IsReadOnly="True"
             VerticalAlignment="Center">
 
@@ -83,7 +79,18 @@
                 Grid.Column="1"
                 BorderBrush="Black">
 
-                <ListView Name="DuplicateItemsListView"></ListView>
+                <ListView Name="DuplicateItemsListView">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:Name="DuplicateItemTemplate" DataType="{x:Type duplicateDetection:DuplicateEntry}">
+                            <TextBlock Text="{Binding FileName}"></TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="DuplicateItemOnCLick" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
             </Border>
 
             <TextBlock Grid.Column="2"></TextBlock>

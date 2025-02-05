@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using DuplicateDetector.WinApp.Services;
+using DuplicateDetector.WinApp.DuplicateDetection;
 using Microsoft.Win32;
 
 namespace DuplicateDetector.WinApp;
@@ -12,14 +12,20 @@ namespace DuplicateDetector.WinApp;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private string? _folderToCheck;
-
     private readonly DuplicateDetectionService _duplicateDetectionService;
 
     public MainWindow(DuplicateDetectionService duplicateDetectionService)
     {
         _duplicateDetectionService = duplicateDetectionService;
         InitializeComponent();
+        Loaded += (_, _) => FirstRun();
+    }
+
+    private void FirstRun()
+    {
+        const string path = @"C:\Users\Gabrielius\Documents\temp";
+        var duplicates = _duplicateDetectionService.GetDuplicateFiles(path);
+        DuplicateItemsListView.ItemsSource = duplicates;
     }
 
     private void FolderInput_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs _)
@@ -33,32 +39,17 @@ public partial class MainWindow : Window
         if (dialog.ShowDialog() is true)
         {
             var selectedFolder = dialog.FolderName;
-            _folderToCheck = selectedFolder;
             FolderInput.Text = selectedFolder;
 
-
             var duplicates = _duplicateDetectionService.GetDuplicateFiles(selectedFolder);
-            PopulateDuplicates(duplicates);
+            DuplicateItemsListView.ItemsSource = duplicates;
         }
     }
 
-    private void PopulateDuplicates(IEnumerable<string> duplicates)
-    {
-        foreach (var duplicate in duplicates)
-        {
-            var item = new ListViewItem
-            {
-                Content = duplicate
-            };
-
-            item.PreviewMouseDown += DuplicateItemOnCLick;
-            DuplicateItemsListView.Items.Add(item);
-        }
-    }
-
-    private static void DuplicateItemOnCLick(object sender, MouseButtonEventArgs _)
+    private void DuplicateItemOnCLick(object sender, MouseButtonEventArgs _)
     {
         var item = sender as ListViewItem;
-        Debug.WriteLine(item!.Content);
+        var duplicateItem = item?.Content as DuplicateEntry;
+        Debug.WriteLine(duplicateItem);
     }
 }

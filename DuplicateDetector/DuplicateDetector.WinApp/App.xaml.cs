@@ -2,7 +2,7 @@
 using System.Data;
 using System.Security.Authentication.ExtendedProtection;
 using System.Windows;
-using DuplicateDetector.WinApp.Services;
+using DuplicateDetector.WinApp.DuplicateDetection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DuplicateDetector.WinApp;
@@ -12,7 +12,7 @@ namespace DuplicateDetector.WinApp;
 /// </summary>
 public partial class App : Application
 {
-    private IServiceProvider _serviceProvider;
+    private IServiceProvider? _serviceProvider;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -24,7 +24,7 @@ public partial class App : Application
         mainWindow.ShowDialog();
     }
 
-    private void ConfigureServices(ServiceCollection services)
+    private static void ConfigureServices(ServiceCollection services)
     {
         services.AddSingleton<DuplicateDetectionService>();
         services.AddSingleton<MainWindow>();
