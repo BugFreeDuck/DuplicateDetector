@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,14 +17,6 @@ public partial class MainWindow : Window
     {
         _duplicateDetectionService = duplicateDetectionService;
         InitializeComponent();
-        Loaded += (_, _) => FirstRun();
-    }
-
-    private void FirstRun()
-    {
-        const string path = @"C:\Users\Gabrielius\Documents\temp";
-        var duplicates = _duplicateDetectionService.GetDuplicateFiles(path).ToList();
-        DuplicateItemsListView.ItemsSource = new ObservableCollection<DuplicateEntry>(duplicates);
     }
 
     private void FolderInput_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs _)
