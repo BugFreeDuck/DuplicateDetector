@@ -67,6 +67,11 @@
             Grid.Column="0"
             Grid.ColumnSpan="12"
             Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -74,14 +79,17 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <Image Name="ImageA" Grid.Column="0"></Image>
             <Border
                 Grid.Column="1"
-                BorderBrush="Black">
+                Grid.Row="0"
+                BorderBrush="Black"
+                BorderThickness="2"
+                Padding="2">
 
                 <ListView Name="DuplicateItemsListView">
                     <ListView.ItemTemplate>
-                        <DataTemplate x:Name="DuplicateItemTemplate" DataType="{x:Type duplicateDetection:DuplicateEntry}">
+                        <DataTemplate x:Name="DuplicateItemTemplate"
+                                      DataType="{x:Type duplicateDetection:DuplicateEntry}">
                             <TextBlock Text="{Binding FileName}"></TextBlock>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -93,7 +101,47 @@
                 </ListView>
             </Border>
 
-            <Image Name="ImageB" Grid.Column="2"></Image>
+            <Border
+                Grid.Column="1"
+                Grid.Row="1"
+                BorderBrush="Black"
+                BorderThickness="2"
+                Padding="2">
+
+
+                <ListView Name="OccurrencesListView" SelectionChanged="OccurrenceOnSelection">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:Name="OccurenceTemplate">
+                            <TextBlock Text="{Binding .}"></TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <!-- <ListView.ItemContainerStyle> -->
+                    <!--     <Style TargetType="ListViewItem"> -->
+                    <!--         <EventSetter Event="PreviewMouseLeftButtonDown" Handler="DuplicateItemOnCLick" /> -->
+                    <!--     </Style> -->
+                    <!-- </ListView.ItemContainerStyle> -->
+                </ListView>
+            </Border>
+
+            <Grid
+                Grid.Column="1"
+                Grid.Row="2"
+            >
+
+                <Grid.ColumnDefinitions>
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    Name="KeepSelectedBtn"
+                    Width="Auto"
+                    IsEnabled="False"
+                    Click="KeepSelected_OnCLick">
+                    Keep selected
+                </Button>
+            </Grid>
+
+            <Image Name="ImageA" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"></Image>
+            <Image Name="ImageB" Grid.Row="0" Grid.Column="2" Grid.RowSpan="3"></Image>
 
         </Grid>
 

@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -22,8 +24,8 @@ public partial class MainWindow : Window
     private void FirstRun()
     {
         const string path = @"C:\Users\Gabrielius\Documents\temp";
-        var duplicates = _duplicateDetectionService.GetDuplicateFiles(path);
-        DuplicateItemsListView.ItemsSource = duplicates;
+        var duplicates = _duplicateDetectionService.GetDuplicateFiles(path).ToList();
+        DuplicateItemsListView.ItemsSource = new ObservableCollection<DuplicateEntry>(duplicates);
     }
 
     private void FolderInput_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs _)
@@ -39,8 +41,8 @@ public partial class MainWindow : Window
             var selectedFolder = dialog.FolderName;
             FolderInput.Text = selectedFolder;
 
-            var duplicates = _duplicateDetectionService.GetDuplicateFiles(selectedFolder);
-            DuplicateItemsListView.ItemsSource = duplicates;
+            var duplicates = _duplicateDetectionService.GetDuplicateFiles(selectedFolder).ToList();
+            DuplicateItemsListView.ItemsSource = new ObservableCollection<DuplicateEntry>(duplicates);
         }
     }
 
@@ -58,14 +60,56 @@ public partial class MainWindow : Window
         var lastFile = duplicateItem.Occurrences.Last();
         RenderImage(ImageA, firstFile);
         RenderImage(ImageB, lastFile);
+
+        OccurrencesListView.ItemsSource = duplicateItem.Occurrences;
+    }
+
+    private void OccurrenceOnSelection(object sender, SelectionChangedEventArgs e)
+    {
+        KeepSelectedBtn.IsEnabled = !string.IsNullOrWhiteSpace(OccurrencesListView.SelectedItem?.ToString());
+    }
+
+    private void KeepSelected_OnCLick(object sender, RoutedEventArgs e)
+    {
+        if (
+            OccurrencesListView.ItemsSource is not string[] occurrences ||
+            OccurrencesListView.SelectedItem is not string keepItem
+        )
+        {
+            return;
+        }
+
+        ImageA.Source = null;
+        ImageB.Source = null;
+
+        foreach (var occurence in occurrences.Except([keepItem]))
+        {
+            File.Delete(occurence);
+        }
+
+        var selectedDuplicate = (DuplicateEntry)DuplicateItemsListView.SelectedItem;
+        var items = (IList<DuplicateEntry>)DuplicateItemsListView.ItemsSource;
+
+        items.Remove(selectedDuplicate);
+
+        OccurrencesListView.ItemsSource = null;
     }
 
     private static void RenderImage(Image imageControl, string filename)
     {
-        var bitmap = new BitmapImage();
-        bitmap.BeginInit();
-        bitmap.UriSource = new Uri(filename);
-        bitmap.EndInit();
+        var bitmap = LoadImage(filename);
         imageControl.Source = bitmap;
+    }
+
+    private static BitmapImage LoadImage(string filename)
+    {
+        var image = new BitmapImage();
+        using var stream = File.OpenRead(filename);
+        image.BeginInit();
+        image.CacheOption = BitmapCacheOption.OnLoad;
+        image.StreamSource = stream;
+        image.EndInit();
+
+        return image;
     }
 }

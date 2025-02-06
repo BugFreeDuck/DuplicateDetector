@@ -14,7 +14,7 @@ public class DuplicateDetectionService
             .GetFiles(directory, "*.*", SearchOption.AllDirectories)
             .Select(file =>
             {
-                using var fs = new FileStream(file, FileMode.Open, FileAccess.Read);
+                using var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Delete);
                 return new
                 {
                     FullPath = file,
